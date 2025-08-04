@@ -405,3 +405,11 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/385j8888/ZOUMAGUIX/refs/heads/main/%E8%84%91%E5%8F%B6%E4%BC%A0%E9%80%81.lua"))()
+local chat = game:GetService("TextChatService").ChatWindowConfiguration
+chat.Enabled = true
+
+game:GetService("StarterGui"):SetCore("SendNotification", { 
+	Title = "脑叶公司";
+	Text = "已展开聊天框，现在你可以查看聊天框消息啦~";
+	Icon = "rbxthumb://type=Asset&id=17245602801&w=150&h=150";
+Duration = 6})
