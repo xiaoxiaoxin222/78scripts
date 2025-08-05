@@ -16,7 +16,7 @@ screenGui.Parent = playerGui
 -- 主容器框架
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0.8, 0, 0.7, 0)
+mainFrame.Size = UDim2.new(0.6, 0, 0.6, 0)
 mainFrame.Position = UDim2.new(0.1, 0, 0.15, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 mainFrame.BackgroundTransparency = 0.1
@@ -76,7 +76,7 @@ toggleButton.Size = UDim2.new(0.15, 0, 0.08, 0)
 toggleButton.Position = UDim2.new(0.01, 0, 0.01, 0)
 toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 100)
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.Text = "≡"
+toggleButton.Text = "打开/隐藏"
 toggleButton.TextScaled = true
 toggleButton.Font = Enum.Font.GothamBold
 toggleButton.BorderSizePixel = 0
@@ -113,7 +113,7 @@ local function createAbnormalityUI(abnormalityName)
     
     -- 创建四个开关按钮
     local buttons = {}
-    local buttonTypes = {"本能", "洞察", "沟通", "压迫"}
+    local buttonTypes = {"本能😡", "洞察💀", "沟通👿", "压迫🥶"}
     local buttonColors = {
         Color3.fromRGB(200, 60, 60),   
         Color3.fromRGB(230, 230, 230),   
@@ -413,3 +413,8 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 	Text = "已展开聊天框，现在你可以查看聊天框消息啦~";
 	Icon = "rbxthumb://type=Asset&id=17245602801&w=150&h=150";
 Duration = 6})
+game:GetService("StarterGui"):SetCore("SendNotification", { 
+	Title = "走马观花X";
+	Text = "此脚本隶属走马观花附属脚本";
+	Icon = "rbxthumb://type=Asset&id=17245602801&w=150&h=150";
+Duration = 10})
