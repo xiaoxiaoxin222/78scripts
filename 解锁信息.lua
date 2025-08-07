@@ -2,7 +2,7 @@
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
 gui.Name = "UnlockButtonGUI"
-gui.Parent = player:WaitForChild("PlayerGui")
+gui.Parent = game:GetService("CoreGui")
 
 local button = Instance.new("TextButton")
 button.Name = "UnlockButton"
