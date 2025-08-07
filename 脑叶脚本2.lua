@@ -16,7 +16,7 @@ screenGui.Parent = playerGui
 -- 主容器框架
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0.6, 0, 0.6, 0)
+mainFrame.Size = UDim2.new(0.75, 0, 0.75, 0)
 mainFrame.Position = UDim2.new(0.1, 0, 0.15, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 mainFrame.BackgroundTransparency = 0.1
