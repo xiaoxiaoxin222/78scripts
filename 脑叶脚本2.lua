@@ -16,7 +16,7 @@ screenGui.Parent = playerGui
 -- 主容器框架
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0.75, 0, 0.75, 0)
+mainFrame.Size = UDim2.new(0.8, 0, 0.8, 0)
 mainFrame.Position = UDim2.new(0.1, 0, 0.15, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 mainFrame.BackgroundTransparency = 0.1
@@ -63,11 +63,14 @@ scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.Parent = mainFrame
 
--- UI布局
-local uiListLayout = Instance.new("UIListLayout")
-uiListLayout.Padding = UDim.new(0.02, 0)
-uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-uiListLayout.Parent = scrollFrame
+-- UI网格布局（每行两个模块）
+local uiGridLayout = Instance.new("UIGridLayout")
+uiGridLayout.CellSize = UDim2.new(0.5, -10, 0, 140)  -- 每行两个模块
+uiGridLayout.CellPadding = UDim2.new(0.02, 0, 0.02, 0)
+uiGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+uiGridLayout.FillDirectionMaxCells = 2  -- 每行最多两个
+uiGridLayout.Parent = scrollFrame
 
 -- 显示/隐藏按钮
 local toggleButton = Instance.new("TextButton")
@@ -76,7 +79,7 @@ toggleButton.Size = UDim2.new(0.15, 0, 0.08, 0)
 toggleButton.Position = UDim2.new(0.01, 0, 0.01, 0)
 toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 100)
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.Text = "打开/隐藏"
+toggleButton.Text = "≡"
 toggleButton.TextScaled = true
 toggleButton.Font = Enum.Font.GothamBold
 toggleButton.BorderSizePixel = 0
@@ -90,7 +93,7 @@ toggleButtonCorner.Parent = toggleButton
 local function createAbnormalityUI(abnormalityName)
     local frame = Instance.new("Frame")
     frame.Name = abnormalityName
-    frame.Size = UDim2.new(1, 0, 0, 120)
+    frame.Size = UDim2.new(1, 0, 0, 140)  -- 高度增加以适应两行按钮
     frame.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
     frame.BackgroundTransparency = 0.2
     frame.LayoutOrder = 1
@@ -111,28 +114,52 @@ local function createAbnormalityUI(abnormalityName)
     nameLabel.BackgroundTransparency = 1
     nameLabel.Parent = frame
     
+    -- 创建按钮容器（上面两个按钮）
+    local topButtonFrame = Instance.new("Frame")
+    topButtonFrame.Name = "TopButtons"
+    topButtonFrame.Size = UDim2.new(0.9, 0, 0.3, 0)
+    topButtonFrame.Position = UDim2.new(0.05, 0, 0.3, 0)
+    topButtonFrame.BackgroundTransparency = 1
+    topButtonFrame.Parent = frame
+    
+    -- 创建按钮容器（下面两个按钮）
+    local bottomButtonFrame = Instance.new("Frame")
+    bottomButtonFrame.Name = "BottomButtons"
+    bottomButtonFrame.Size = UDim2.new(0.9, 0, 0.3, 0)
+    bottomButtonFrame.Position = UDim2.new(0.05, 0, 0.65, 0)
+    bottomButtonFrame.BackgroundTransparency = 1
+    bottomButtonFrame.Parent = frame
+    
     -- 创建四个开关按钮
     local buttons = {}
-    local buttonTypes = {"本能😡", "洞察💀", "沟通👿", "压迫🥶"}
+    local buttonTypes = {"本能", "洞察", "沟通", "压迫"}
     local buttonColors = {
-        Color3.fromRGB(200, 60, 60),   
-        Color3.fromRGB(230, 230, 230),   
-        Color3.fromRGB(128, 0, 128), 
-        Color3.fromRGB(60, 150, 200)  
+        Color3.fromRGB(200, 60, 60),   -- 本能
+        Color3.fromRGB(230, 230, 230), -- 洞察
+        Color3.fromRGB(128, 0, 128),   -- 沟通
+        Color3.fromRGB(60, 150, 200)   -- 压迫
     }
+    local workTypes = {"Instinct", "Insight", "Attachment", "Repression"}
     
     for i, btnType in ipairs(buttonTypes) do
         local button = Instance.new("TextButton")
-        button.Name = btnType
+        button.Name = workTypes[i]
         button.Text = btnType
         button.TextColor3 = Color3.fromRGB(255, 255, 255)
         button.TextScaled = true
         button.Font = Enum.Font.GothamBold
-        button.Size = UDim2.new(0.22, 0, 0.5, 0)
-        button.Position = UDim2.new(0.05 + (i-1)*0.24, 0, 0.3, 0)
+        button.Size = UDim2.new(0.48, 0, 1, 0)  -- 占容器宽度的48%
         button.BackgroundColor3 = buttonColors[i]
         button.AutoButtonColor = false
-        button.Parent = frame
+        
+        -- 根据位置添加到不同的容器
+        if i == 1 or i == 2 then
+            button.Position = UDim2.new((i-1)*0.52, 0, 0, 0)
+            button.Parent = topButtonFrame
+        else
+            button.Position = UDim2.new((i-3)*0.52, 0, 0, 0)
+            button.Parent = bottomButtonFrame
+        end
         
         local buttonCorner = Instance.new("UICorner")
         buttonCorner.CornerRadius = UDim.new(0.2, 0)
@@ -165,14 +192,16 @@ local abnormalityUIs = {}
 local activeButtons = {} -- 存储每个异想体当前激活的按钮
 
 local function toggleButtonState(button, abnormalityName, workType)
-    local frame = button.Parent
-    local buttons = frame:GetChildren()
+    local frame = button.Parent.Parent  -- 按钮的父容器是Frame，再上一级是主模块Frame
+    local buttons = frame:GetDescendants()
     
     -- 关闭同组其他按钮
     for _, btn in ipairs(buttons) do
-        if btn:IsA("TextButton") and btn ~= button then
-            btn.SelectedIndicator.Visible = false
-            btn.BackgroundTransparency = 0.4
+        if btn:IsA("TextButton") then
+            if btn.SelectedIndicator and btn ~= button then
+                btn.SelectedIndicator.Visible = false
+                btn.BackgroundTransparency = 0.4
+            end
         end
     end
     
@@ -189,7 +218,8 @@ local function toggleButtonState(button, abnormalityName, workType)
         activeButtons[abnormalityName] = {
             button = button,
             workType = workType,
-            abnormalityName = abnormalityName
+            abnormalityName = abnormalityName,
+            lastWorkTime = 0
         }
     end
 end
@@ -240,14 +270,11 @@ local function startWorkLoop()
     
     workLoop = RunService.Heartbeat:Connect(function()
         for abnormalityName, workInfo in pairs(activeButtons) do
-            performWork(abnormalityName, workInfo.workType)
-            -- 添加2秒延迟效果（实际每帧执行，但通过时间差控制）
-            if workInfo.lastWorkTime then
-                if tick() - workInfo.lastWorkTime < 2 then
-                    continue
-                end
+            -- 检查是否达到2秒间隔
+            if tick() - workInfo.lastWorkTime >= 2 then
+                performWork(abnormalityName, workInfo.workType)
+                workInfo.lastWorkTime = tick()
             end
-            workInfo.lastWorkTime = tick()
         end
     end)
 end
@@ -322,7 +349,7 @@ local function refreshUI()
     end
 end
 
--- 拖动功能
+-- 拖动功能（优化触摸屏体验）
 local dragging = false
 local dragStartPos, frameStartPos
 
@@ -344,19 +371,37 @@ local function endDrag()
 end
 
 dragBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
         startDrag(input)
         return Enum.ContextActionResult.Sink
     end
 end)
 
 dragBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
         doDrag(input)
     end
 end)
 
 dragBar.InputEnded:Connect(function()
+    endDrag()
+end)
+
+-- 显示/隐藏按钮也添加拖动功能
+toggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        startDrag(input)
+        return Enum.ContextActionResult.Sink
+    end
+end)
+
+toggleButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+        doDrag(input)
+    end
+end)
+
+toggleButton.InputEnded:Connect(function()
     endDrag()
 end)
 
@@ -404,6 +449,7 @@ RunService.Heartbeat:Connect(function()
         lastRefreshTime = tick()
     end
 end)
+
 loadstring(game:HttpGet("https://raw.githubusercontent.com/385j8888/ZOUMAGUIX/refs/heads/main/%E8%84%91%E5%8F%B6%E4%BC%A0%E9%80%81.lua"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoxiaoxin222/78scripts/refs/heads/main/%E8%A7%A3%E9%94%81%E4%BF%A1%E6%81%AF.lua"))()
 
