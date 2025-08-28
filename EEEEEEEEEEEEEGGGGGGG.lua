@@ -7,7 +7,7 @@ ScreenGui.Name = "sz"
 VideoScreen.Parent = ScreenGui
 VideoScreen.Size = UDim2.new(1,0,1,0)
 
-writefile("XJL.mp4", game:HttpGet("https://raw.githubusercontent.com/xiaoxiaoxin222/78scripts/refs/heads/main/Video_1754373105038.mp4"))
+writefile("XJL.mp4", game:HttpGet("https://github.com/xiaoxiaoxin222/78scripts/blob/main/Videos/Video_1754373105038.mp4?raw=true"))
 
 VideoScreen.Video = getcustomasset("XJL.mp4")
 
